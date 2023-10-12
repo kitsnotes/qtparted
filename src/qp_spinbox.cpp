@@ -247,6 +247,6 @@ int QP_SpinBox::mapTextToValue(bool *ok) {
 QString QP_SpinBox::mapValueToText(int v) {
 	float f = float(v) / 100.0;
 	QString buf;
-	buf.sprintf(format.toLatin1(), f);
+    buf.asprintf(format.toLatin1(), f);
 	return buf;
 }

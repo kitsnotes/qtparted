@@ -71,7 +71,7 @@ QString mountPoint(QP_PartInfo *partinfo) {
 	struct mntent *mnt;
 
 	if ((f = setmntent (MOUNTED, "r")) == 0)
-		return QString::null;
+		return QString();
 
 	// loop: compare device with each mounted device
 	while (((mnt = getmntent (f)) != 0)) {
@@ -81,7 +81,7 @@ QString mountPoint(QP_PartInfo *partinfo) {
 		}
 	}
 	endmntent(f);
-	return QString::null;
+	return QString();
 }
 
 //------------------------------------------------

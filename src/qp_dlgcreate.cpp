@@ -59,8 +59,8 @@ QP_dlgCreate::~QP_dlgCreate() {
 void QP_dlgCreate::init_dialog() {
 	/*---clear combo type and combo filesystem and the label box---*/
 	cmbType->clear();
-	cmbFilesystem->clear();
-	txtLabel->setText(QString::null);
+    cmbFilesystem->clear();
+    txtLabel->setText(QString());
 
 	/*---enable combo filesystem box and the label box---*/
 	cmbFilesystem->setEnabled(true);
@@ -135,9 +135,9 @@ QString QP_dlgCreate::fileSystemName() {
 
 void QP_dlgCreate::slotFSChanged(int) {
 	QP_FileSystemSpec *fsspec = _filesystem->nameToFSSpec(fileSystemName());
-	PedSector newmaxsize = _maxsize;
-	
-	lblMessage->setText(QString::null);
+    PedSector newmaxsize = _maxsize;
+
+    lblMessage->setText(QString());
 
 	if (type() != QTParted::extended) {
 		if (fsspec->maxFsSize() != 0) {

@@ -39,9 +39,9 @@ QP_dlgProgress::~QP_dlgProgress() {
 void QP_dlgProgress::init_dialog() {
 	btnOk->setEnabled(false);
 	progressBar->setValue(0);
-	lblState->setText(tr("Initializing"));
-	lblMessage->setText(QString::null);
-	lblTimeLeft->setText(QString::null);
+    lblState->setText(tr("Initializing"));
+    lblMessage->setText(QString());
+    lblTimeLeft->setText(QString());
 }
 
 int QP_dlgProgress::show_dialog() {

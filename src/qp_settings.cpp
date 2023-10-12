@@ -35,7 +35,7 @@ static QString findApp(QString const &name) {
 		if(QFile::exists(guess))
 			return guess;
 	}
-	return QString::null;
+	return QString();
 }
 
 QP_Settings::QP_Settings():settings(QSettings::SystemScope, "QtParted", "QtParted") {
@@ -127,5 +127,5 @@ void QP_Settings::setDevUpdate(QString device, time_t time) {
 	char buf[255];
 	sprintf(buf, "%lld", (long long)time);
 
-	settings.setValue(entry, buf);
+    settings.setValue(entry, QString(buf));
 }

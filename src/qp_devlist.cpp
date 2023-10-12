@@ -116,7 +116,7 @@ QString QP_Device::shortname() {
 
 void QP_Device::setShortname(QString shortname) {
 	_shortname = shortname;
-	_longname = QString::null;
+    _longname = QString();
 }
 
 bool QP_Device::isBusy() {

@@ -127,13 +127,14 @@ int main(int argc, char *argv[]) {
 	} while (next_option != -1);
 
 	/*---install translation file for application strings---*/
+    // TODO: fix this
 	QTranslator *translator = new QTranslator(0);
-	translator->load(QString("qtparted_"+QLocale::system().name()), QString(DATADIR "/locale"));
-	app.installTranslator(translator);
+    //translator->load(QString("qtparted_"+QLocale::system().name()), QString(DATADIR "/locale"));
+    //app.installTranslator(translator);
 
 	/*---initialize the debug system---*/
 	if (iLog) g_debug.open();
-	showDebug("QtParted debug logfile (http://qtparted.sf.net) version %s\n---------\n", VERSION);
+    //showDebug("QtParted debug logfile (http://qtparted.sf.net) version %s\n---------\n", VERSION);
 
 	/*---check the Parted version---*/
 	if (!QP_LibParted::checkForParted())
@@ -146,11 +147,11 @@ int main(int argc, char *argv[]) {
 
 	mainwindow = new QP_MainWindow(&settings, 0);
 
-        QSplashScreen *splash=new QSplashScreen(QPixmap(DATADIR "/pics/qtp_splash.png"));
+        /*QSplashScreen *splash=new QSplashScreen(QPixmap(DATADIR "/pics/qtp_splash.png"));
         splash->connect(mainwindow, SIGNAL(sigSplashInfo(const QString &)),
                         SLOT(showMessage(const QString &)));
         splash->finish(mainwindow);
-        splash->show();
+        splash->show();*/
 
 	mainwindow->init();
 

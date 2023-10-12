@@ -136,7 +136,7 @@ public:
 	virtual QString message() {return _message;}
 
 	/*---return the name of the filesystem---*/
-	virtual QString fsname() {return QString::null;}
+    virtual QString fsname() {return QString();}
 	
 	/*---return the "resize" minimal size---*/
 	virtual PedSector min_size(QString) {return _min_size;}
@@ -180,7 +180,7 @@ public:
 	QP_FSswap();
 	bool mkpartfs(QString dev, QString label);
 	QString fsname() { return QString("swap"); }
-	static QString _get_label(PedPartition *) { return QString::null; /* FIXME */ }
+    static QString _get_label(PedPartition *) { return QString(); /* FIXME */ }
 };
 
 class QP_FSNtfs : public QP_FSWrap {
@@ -259,7 +259,7 @@ private:
 class QP_FSFat : public QP_FSWrap {
 	Q_OBJECT
 public:
-	QP_FSFat(QString bitflag=QString::null);
+    QP_FSFat(QString bitflag=QString());
 	bool mkpartfs(QString dev, QString label);
 	static QString _get_label(PedPartition *);
 protected:

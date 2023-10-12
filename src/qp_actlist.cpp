@@ -217,7 +217,7 @@ void QP_ActionList::update_listpartitions()
             partinfo->_geometry = part->geom;
             partinfo->setDevice ( _libparted->_qpdevice );
             partinfo->min_size = -1;
-            partinfo->_label = QString::null;
+            partinfo->_label = QString();
             partinfo->_free = _libparted->filesystem->free();
             partinfo->_unknown = _libparted->filesystem->unknown();
             partinfo->_libparted = _libparted;
@@ -338,7 +338,7 @@ void QP_ActionList::scan_partitions()
 
         partinfo->min_size = -1;
 
-        partinfo->_label = QString::null;
+        partinfo->_label = QString();
 
         partinfo->_free = _libparted->filesystem->free();
 
@@ -424,7 +424,7 @@ void QP_ActionList::scan_partitions()
                 /*---emit a signal for update the progressbar---*/
                 _libparted->_message = QString ( tr ( "Getting info about partition %1." ) )
                                        .arg ( p->partname() );
-                _libparted->emitSigTimer ( i*100 / totPart, _libparted->message(), QString::null );
+                _libparted->emitSigTimer ( i*100 / totPart, _libparted->message(), QString() );
 
                 /*---get info about this primary partition---*/
                 part = ped_disk_get_partition ( disk(), p->num );
@@ -449,7 +449,7 @@ void QP_ActionList::scan_partitions()
                     /*---emit a signal for update the progressbar---*/
                     _libparted->_message = QString ( tr ( "Getting info about partition %1." ) )
                                            .arg ( logi->partname() );
-                    _libparted->emitSigTimer ( i*100 / totPart, _libparted->message(), QString::null );
+                    _libparted->emitSigTimer ( i*100 / totPart, _libparted->message(), QString() );
 
                     /*---get info about this logical partition---*/
                     part = ped_disk_get_partition ( disk(), logi->num );
@@ -465,7 +465,7 @@ void QP_ActionList::scan_partitions()
         }
     }
 
-    _libparted->emitSigTimer ( 100, _libparted->message(), QString::null );
+    _libparted->emitSigTimer ( 100, _libparted->message(), QString() );
 }
 
 bool QP_ActionList::get_partfilesystem_info ( PedPartition *part, QP_PartInfo *partinfo )
@@ -678,7 +678,7 @@ void QP_ActionList::commit()
     showDebug ( "%s", "actionlist::commit\n" );
 
     //messageState, used to keep "error message" returned by libparted
-    QString messageState = QString::null;
+    QString messageState = QString();
 
     /*---undo all disk state---*/
 

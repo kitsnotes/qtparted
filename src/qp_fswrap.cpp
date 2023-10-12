@@ -21,7 +21,7 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include <qregexp.h>
+#include <QRegularExpression>
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdarg.h>
@@ -130,7 +130,7 @@ QString QP_FSWrap::get_label(PedPartition * part, QString name)
 	else if (name.compare("swap") == 0)
 		return QP_FSswap::_get_label(part);
 	else
-		return QString::null;
+		return QString();
 }
 
 bool QP_FSWrap::read_sector(PedPartition * part, PedSector offset,
@@ -170,9 +170,9 @@ bool QP_FSWrap::qpMount(QString device)
 	while ((cline = fs_getline())) {
 		QString line = QString(cline);
 
-		QRegExp rx = QRegExp("^mount: (.*)$");
-		if (rx.indexIn(line) == 0) {
-			QString capError = rx.cap(1);
+        QRegularExpression rx = QRegularExpression("^mount: (.*)$");
+        if (rx.match(line).hasMatch()) {
+            QString capError = rx.match(line).captured();
 			_message = capError;
 			error = true;
 		}
@@ -319,7 +319,7 @@ bool QP_FSNtfs::resize(QP_LibParted * _libparted, bool write,
 bool QP_FSNtfs::ntfsresize(bool write, QString dev, PedSector newsize)
 {
 	/*---init of the error message---*/
-	_message = QString::null;
+	_message = QString();
 
 	/*---calculate size of the partition in bytes---*/
 	PedSector size = (PedSector) ((newsize - 1) * 512);
@@ -338,20 +338,20 @@ bool QP_FSNtfs::ntfsresize(bool write, QString dev, PedSector newsize)
 	while ((cline = fs_getline())) {
 		QString line = QString(cline);
 
-		QRegExp rx;
+        QRegularExpression rx;
 
 		if (!error) {
-			rx = QRegExp("^ERROR.*: (.*)");
-			if (rx.indexIn(line) == 0) {
-				QString captured = rx.cap(1);
-				_message = QString(captured);
+            rx = QRegularExpression("^ERROR.*: (.*)");
+            if (rx.match(line).hasMatch()) {
+                QString captured = rx.match(line).captured();
+                _message = QString(captured);
 				error = true;
 			}
 		}
 
 		if (!error) {
-			rx = QRegExp("^The volume end is fragmented.*");
-			if (rx.indexIn(line) == 0) {
+            rx = QRegularExpression("^The volume end is fragmented.*");
+            if (rx.match(line).hasMatch()) {
 				_message =
 				    QString
 				    ("The partition is fragmented.");
@@ -367,9 +367,9 @@ bool QP_FSNtfs::ntfsresize(bool write, QString dev, PedSector newsize)
 		linesub.replace(QChar('\r'), " ");
 #endif
 		//example: 34,72 percent completed
-		rx = QRegExp("^.* (\\d*),(\\d*) percent completed.*$");
-		if (rx.indexIn(linesub) == 0) {
-			QString capIntPercent = rx.cap(1);
+        rx = QRegularExpression("^.* (\\d*),(\\d*) percent completed.*$");
+        if (rx.match(linesub).hasMatch()) {
+            QString capIntPercent = rx.match(linesub).captured(1);
 			printf("letto: %s\n", capIntPercent.toLatin1().data());
 			//QString capFloatPercent = rx.cap(2);
 
@@ -380,13 +380,13 @@ bool QP_FSNtfs::ntfsresize(bool write, QString dev, PedSector newsize)
 
 			emit sigTimer(iPerc,
 				      QString(tr("Resizing in progress.")),
-				      QString::null);
+				      QString());
 		}
 		//BETA: change could with might with ntfsresize 1.9
 		//rx = QRegExp("^Now You could resize at \\d* bytes or (\\d*) .*");
-		rx = QRegExp("^.*You ..... resize at \\d* bytes or (\\d*) .*");
-		if (rx.indexIn(line) == 0) {
-			QString captured = rx.cap(1);
+        rx = QRegularExpression("^.*You ..... resize at \\d* bytes or (\\d*) .*");
+        if (rx.match(line).hasMatch()) {
+            QString captured = rx.match(line).captured();
 			_message = QString("The partition is fragmented. Try to defragment it, or resize to %1MB")
 			           .arg(captured);
 			error = true;
@@ -412,19 +412,16 @@ bool QP_FSNtfs::ntfsresize(bool write, QString dev, PedSector newsize)
 	bool success = false;
 	while ((cline = fs_getline())) {
 		QString line = QString(cline);
-		QRegExp rx;
+        QRegularExpression rx;
 
 		/*---progress bar!---*/
 		QString linesub = line;
-#ifdef QT30COMPATIBILITY
-		linesub.replace(QRegExp("\r"), " ");
-#else
+
 		linesub.replace(QChar('\r'), " ");
-#endif
 		//example: 34,72 percent completed
-		rx = QRegExp("^.* (\\d*),(\\d*) percent completed.*$");
-		if (rx.indexIn(linesub) == 0) {
-			QString capIntPercent = rx.cap(1);
+        rx = QRegularExpression("^.* (\\d*),(\\d*) percent completed.*$");
+        if (rx.match(linesub).hasMatch()) {
+            QString capIntPercent = rx.match(linesub).captured();
 			//QString capFloatPercent = rx.cap(2);
 
 			bool rc;
@@ -434,25 +431,25 @@ bool QP_FSNtfs::ntfsresize(bool write, QString dev, PedSector newsize)
 
 			emit sigTimer(iPerc,
 				      QString(tr("Resizing in progress.")),
-				      QString::null);
+				      QString());
 		}
 		//rx = QRegExp("^Successfully resized NTFS on device");
-		rx = QRegExp("^.*[Ss]uccessfully.*");
-		if (rx.indexIn(line) == 0)
+        rx = QRegularExpression("^.*[Ss]uccessfully.*");
+        if (rx.match(line).hasMatch())
 			success = true;
-		rx = QRegExp("^Nothing to do: NTFS volume size is already OK.");
-		if (rx.indexIn(line) == 0)
+        rx = QRegularExpression("^Nothing to do: NTFS volume size is already OK.");
+        if (rx.match(line).hasMatch())
 			success = true;
 
-		rx = QRegExp("^Syncing device.*");
-		if (rx.indexIn(line) == 0) {
+        rx = QRegularExpression("^Syncing device.*");
+        if (rx.match(line).hasMatch()) {
 			emit sigTimer(99, QString(tr("Syncing device.")),
-				      QString::null);
+				      QString());
 		}
 
-		rx = QRegExp("^ERROR.*: (.*)");
-		if (rx.indexIn(line) == 0) {
-			QString captured = rx.cap(1);
+        rx = QRegularExpression("^ERROR.*: (.*)");
+        if (rx.match(line).hasMatch()) {
+            QString captured = rx.match(line).captured(1);
 			_message = QString(captured);
 		}
 	}
@@ -472,7 +469,7 @@ bool QP_FSNtfs::mkpartfs(QString dev, QString label)
 	QString cmdline;
 
 	/*---init of the error message---*/
-	_message = QString::null;
+	_message = QString();
 
 	/*---prepare the command line---*/
 	if (label.isEmpty())
@@ -492,14 +489,14 @@ bool QP_FSNtfs::mkpartfs(QString dev, QString label)
 	while ((cline = fs_getline())) {
 		QString line = QString(cline);
 
-		QRegExp rx;
-		rx = QRegExp("^mkntfs completed successfully. Have a nice day.");
-		if (rx.indexIn(line) == 0)
+        QRegularExpression rx;
+        rx = QRegularExpression("^mkntfs completed successfully. Have a nice day.");
+        if (rx.match(line).hasMatch())
 			success = true;
 
-		rx = QRegExp("^ERROR.*: (.*)");
-		if (rx.indexIn(line) == 0) {
-			QString captured = rx.cap(1);
+        rx = QRegularExpression("^ERROR.*: (.*)");
+        if (rx.match(line).hasMatch()) {
+            QString captured = rx.match(line).captured();
 			_message = QString(captured);
 			success = false;
 		}
@@ -514,7 +511,7 @@ PedSector QP_FSNtfs::min_size(QString dev)
 	PedSector size = -1;
 
 	/*---init of the error message---*/
-	_message = QString::null;
+	_message = QString();
 
 	/*---prepare the command line---*/
 	QString cmdline = lstExternalTools->getPath("ntfsresize") + " -f -i " + dev;
@@ -530,10 +527,10 @@ PedSector QP_FSNtfs::min_size(QString dev)
 	while ((cline = fs_getline())) {
 		QString line = QString(cline);
 
-		QRegExp rx;
-		rx = QRegExp("^.*You ..... resize at (\\d*) bytes or (\\d*) .*");
-		if (rx.indexIn(line) == 0) {
-			QString captured = rx.cap(1);
+        QRegularExpression rx;
+        rx = QRegularExpression("^.*You ..... resize at (\\d*) bytes or (\\d*) .*");
+        if (rx.match(line).hasMatch()) {
+            QString captured = rx.match(line).captured(1);
 			sscanf(captured.toLatin1(), "%lld", &size);
 			size /= 512;
 			size += 8 * MEGABYTE_SECTORS;
@@ -552,7 +549,7 @@ QString QP_FSNtfs::fsname()
 }
 
 /*QString QP_FSNtfs::_get_label(PedPartition *) {
-	return QString::null;
+	return QString();
 }*/
 
 /*---SWAP WRAPPER----------------------------------------------------------------*/
@@ -572,7 +569,7 @@ bool QP_FSswap::mkpartfs(QString dev, QString label) {
 	QString cmdline;
 
 	/*---init of the error message---*/
-	_message = QString::null;
+	_message = QString();
 
 	/*---prepare the command line---*/
 	if (!label.isEmpty())
@@ -690,7 +687,7 @@ bool QP_FSJfs::jfsresize(bool write, QP_PartInfo * partinfo, PedSector)
 		return true;
 
 	/*---init of the error message---*/
-	_message = QString::null;
+	_message = QString();
 
 	if (!qpMount(partinfo->partname()))
 		return false;
@@ -708,10 +705,10 @@ bool QP_FSJfs::jfsresize(bool write, QP_PartInfo * partinfo, PedSector)
 	while ((cline = fs_getline())) {
 		QString line = QString(cline);
 
-		QRegExp rx;
-		rx = QRegExp("^mount: (.*)$");
-		if (rx.indexIn(line) == 0) {
-			QString capError = rx.cap(1);
+        QRegularExpression rx;
+        rx = QRegularExpression("^mount: (.*)$");
+        if (rx.match(line).hasMatch()) {
+            QString capError = rx.match(line).captured(1);
 			_message = capError;
 			error = true;
 		}
@@ -733,7 +730,7 @@ bool QP_FSJfs::mkpartfs(QString dev, QString label)
 	QString cmdline;
 
 	/*---init of the error message---*/
-	_message = QString::null;
+	_message = QString();
 
 	/*---prepare the command line---*/
 	if (label.isEmpty())
@@ -753,9 +750,9 @@ bool QP_FSJfs::mkpartfs(QString dev, QString label)
 	while ((cline = fs_getline())) {
 		QString line = QString(cline);
 
-		QRegExp rx;
-		rx = QRegExp("^Format completed successfully.");
-		if (rx.indexIn(line) == 0)
+        QRegularExpression rx;
+        rx = QRegularExpression("^Format completed successfully.");
+        if (rx.match(line).hasMatch())
 			success = true;
 	}
 	fs_close();
@@ -774,7 +771,7 @@ QString QP_FSJfs::_get_label(PedPartition * part)
 	char label[12];
 
 	if (!QP_FSWrap::read_sector(part, 64, 4, bootsect))
-		return QString::null;
+		return QString();
 
 	memset(label, 0, sizeof(label));
 	strncpy(label, bootsect + 101, 11);
@@ -783,7 +780,7 @@ QString QP_FSJfs::_get_label(PedPartition * part)
 }
 
 /*---EXT2 WRAPPER----------------------------------------------------------------*/
-QP_FSExt2::QP_FSExt2():QP_FSWrap(),_fsType("ext2"),_extraArgs(QString::null)
+QP_FSExt2::QP_FSExt2():QP_FSWrap(),_fsType("ext2"),_extraArgs(QString())
 {
 	/*---check if the wrapper is installed---*/
 	QString cmdline = "which " + lstExternalTools->getPath("mkfs." + _fsType);
@@ -801,7 +798,7 @@ QString QP_FSExt2::_get_label(PedPartition * part)
 	char label[16];
 
 	if (!QP_FSWrap::read_sector(part, 2, 4, bootsect))
-		return QString::null;
+		return QString();
 
 	memset(label, 0, sizeof(label));
 	strncpy(label, bootsect + 120, 16);
@@ -816,7 +813,7 @@ bool QP_FSExt2::mkpartfs(QString dev, QString label)
 	QString cmdline;
 
 	/*---init of the error message---*/
-	_message = QString::null;
+	_message = QString();
 
 	/*---prepare the command line---*/
 	if (!label.isEmpty())
@@ -835,33 +832,28 @@ bool QP_FSExt2::mkpartfs(QString dev, QString label)
 	while ((cline = fs_getline())) {
 		QString line = QString(cline);
 
-		QRegExp rx;
-		rx = QRegExp("^Writing inode tables");
-		if (rx.indexIn(line) == 0) {
+        QRegularExpression rx;
+        rx = QRegularExpression("^Writing inode tables");
+        if (rx.match(line).hasMatch()) {
 			writenode = true;
 		}
 
-		rx = QRegExp("^Creating journal");
-		if (rx.indexIn(line) == 0) {
+        rx = QRegularExpression("^Creating journal");
+        if (rx.match(line).hasMatch()) {
 			writenode = false;
 			emit sigTimer(90,
 				      QString(tr
 					      ("Writing superblocks and filesystem.")),
-				      QString::null);
+				      QString());
 		}
 
 		if (writenode) {
 			QString linesub = line;
-
-#ifdef QT30COMPATIBILITY
-			linesub.replace(QRegExp("\b"), " ");
-#else
 			linesub.replace(QChar('\b'), " ");
-#endif
-			rx = QRegExp("^.* (\\d*)/(\\d*) .*$");
-			if (rx.indexIn(linesub) == 0) {
-				QString capActual = rx.cap(1);
-				QString capTotal = rx.cap(2);
+            rx = QRegularExpression("^.* (\\d*)/(\\d*) .*$");
+            if (rx.match(linesub).hasMatch()) {
+                QString capActual = rx.match(line).captured(1);
+                QString capTotal = rx.match(line).captured(2);
 
 				bool rc;
 				int iActual = capActual.toInt(&rc);
@@ -871,12 +863,12 @@ bool QP_FSExt2::mkpartfs(QString dev, QString label)
 				emit sigTimer(iPerc,
 					      QString(tr
 						      ("Writing inode tables.")),
-					      QString::null);
+					      QString());
 			}
 		}
 
-		rx = QRegExp("^Writing superblocks and filesystem accounting information: done");
-		if (rx.indexIn(line) == 0)
+        rx = QRegularExpression("^Writing superblocks and filesystem accounting information: done");
+        if (rx.match(line).hasMatch())
 			success = true;
 	}
 	fs_close();
@@ -926,7 +918,7 @@ bool QP_FSBtrFS::mkpartfs(QString dev, QString label)
 	QString cmdline;
 
 	/*---init of the error message---*/
-	_message = QString::null;
+	_message = QString();
 
 	/*---prepare the command line---*/
 	if (!label.isEmpty())
@@ -944,33 +936,28 @@ bool QP_FSBtrFS::mkpartfs(QString dev, QString label)
 	while ((cline = fs_getline())) {
 		QString line = QString(cline);
 
-		QRegExp rx;
-		rx = QRegExp("^Writing inode tables");
-		if (rx.indexIn(line) == 0) {
+        QRegularExpression rx;
+        rx = QRegularExpression("^Writing inode tables");
+        if (rx.match(line).hasMatch()) {
 			writenode = true;
 		}
 
-		rx = QRegExp("^Creating journal");
-		if (rx.indexIn(line) == 0) {
+        rx = QRegularExpression("^Creating journal");
+        if (rx.match(line).hasMatch()) {
 			writenode = false;
 			emit sigTimer(90,
 				      QString(tr
 					      ("Writing superblocks and filesystem.")),
-				      QString::null);
+				      QString());
 		}
 
 		if (writenode) {
 			QString linesub = line;
-
-#ifdef QT30COMPATIBILITY
-			linesub.replace(QRegExp("\b"), " ");
-#else
 			linesub.replace(QChar('\b'), " ");
-#endif
-			rx = QRegExp("^.* (\\d*)/(\\d*) .*$");
-			if (rx.indexIn(linesub) == 0) {
-				QString capActual = rx.cap(1);
-				QString capTotal = rx.cap(2);
+            rx = QRegularExpression("^.* (\\d*)/(\\d*) .*$");
+            if (rx.match(linesub).hasMatch()) {
+                QString capActual = rx.match(line).captured(1);
+                QString capTotal = rx.match(line).captured(2);
 
 				bool rc;
 				int iActual = capActual.toInt(&rc);
@@ -980,12 +967,12 @@ bool QP_FSBtrFS::mkpartfs(QString dev, QString label)
 				emit sigTimer(iPerc,
 					      QString(tr
 						      ("Writing inode tables.")),
-					      QString::null);
+					      QString());
 			}
 		}
 
-		rx = QRegExp("^Writing superblocks and filesystem accounting information: done");
-		if (rx.indexIn(line) == 0)
+        rx = QRegularExpression("^Writing superblocks and filesystem accounting information: done");
+        if (rx.match(line).hasMatch())
 			success = true;
 	}
 	fs_close();
@@ -1004,7 +991,7 @@ QString QP_FSBtrFS::fsname()
 QString QP_FSBtrFS::_get_label(PedPartition * p)
 {
 	return QP_FSExt2::_get_label(p);
-	//return QString::null;
+	//return QString();
 }
 
 /*---XFS WRAPPER-----------------------------------------------------------------*/
@@ -1034,7 +1021,7 @@ bool QP_FSXfs::mkpartfs(QString dev, QString label)
 	QString cmdline;
 
 	/*---init of the error message---*/
-	_message = QString::null;
+	_message = QString();
 
 	/*---prepare the command line---*/
 	if (label.isEmpty())
@@ -1053,9 +1040,9 @@ bool QP_FSXfs::mkpartfs(QString dev, QString label)
 	while ((cline = fs_getline())) {
 		QString line = QString(cline);
 
-		QRegExp rx;
-		rx = QRegExp("^realtime =.*");
-		if (rx.indexIn(line) == 0)
+        QRegularExpression rx;
+        rx = QRegularExpression("^realtime =.*");
+        if (rx.match(line).hasMatch())
 			success = true;
 	}
 	fs_close();
@@ -1144,7 +1131,7 @@ bool QP_FSXfs::xfsresize(bool write, QP_PartInfo * partinfo, PedSector)
 		return true;
 
 	/*---init of the error message---*/
-	_message = QString::null;
+	_message = QString();
 
 	if (!qpMount(partinfo->partname()))
 		return false;
@@ -1162,9 +1149,9 @@ bool QP_FSXfs::xfsresize(bool write, QP_PartInfo * partinfo, PedSector)
 	while ((cline = fs_getline())) {
 		QString line = QString(cline);
 
-		QRegExp rx;
-		rx = QRegExp("^realtime =.*");
-		if (rx.indexIn(line) == 0) {
+        QRegularExpression rx;
+        rx = QRegularExpression("^realtime =.*");
+        if (rx.match(line).hasMatch()) {
 			error = false;
 		}
 	}
@@ -1192,7 +1179,7 @@ QString QP_FSXfs::_get_label(PedPartition * part)
 	char label[13];
 
 	if (!QP_FSWrap::read_sector(part, 0, 4, bootsect))
-		return QString::null;
+		return QString();
 
 	memset(label, 0, sizeof(label));
 	strncpy(label, bootsect + 108, 12);
@@ -1217,7 +1204,7 @@ QP_FSFat::QP_FSFat(QString bitflag):QP_FSWrap(),_bitflag(bitflag) {
 bool QP_FSFat::mkpartfs(QString dev, QString label)
 {
 	QString cmdline;
-	_message = QString::null;
+	_message = QString();
 	if (!label.isEmpty())
 		cmdline += " -n " + label;
 	cmdline += _bitflag;
@@ -1243,7 +1230,7 @@ QString QP_FSFat::_get_label(PedPartition * part)
 
 	if (!QP_FSWrap::read_sector(part, 0, 1, buffer)) {
 		delete[] buffer;
-		return QString::null;
+		return QString();
 	}
 
 	memset(label, 0, sizeof(label));
@@ -1256,7 +1243,7 @@ QString QP_FSFat::_get_label(PedPartition * part)
 /*---REISERFS WRAPPER------------------------------------------------------------*/
 QString QP_FSReiserFS::_get_label(PedPartition *)
 {
-	//return QString::null;
+	//return QString();
 	return tr("No label");
 }
 
@@ -1280,12 +1267,12 @@ QString QP_FSNtfs::_get_label(PedPartition * part)
 	uint64_t i;
 
 	if (!QP_FSWrap::read_sector(part, 0, 32, (char *) bootsect))
-		return QString::null;
+		return QString();
 
 	// 1. check partition has an ntfs file system
 	if (memcmp(bootsect + 3, "NTFS", 4) != 0) {
 		//printf ("NTFS-001: not an NTFS partition\n");
-		return QString::null;
+		return QString();
 	}
 
 	uint16_t nBytesPerSector = NTFS_GETU16(bootsect + 0xB);
@@ -1297,7 +1284,7 @@ QString QP_FSNtfs::_get_label(PedPartition * part)
 	// check informations validity
 	if (nBytesPerSector % 512 != 0) {
 		//printf ("NTFS-002: invalid nBytesPerSector value\n");
-		return QString::null;
+		return QString();
 	}
 	// Calculate clusters and misc informations
 	uint32_t dwClusterSize = (uint32_t) nBytesPerSector * cSectorsPerCluster;
@@ -1320,7 +1307,7 @@ QString QP_FSNtfs::_get_label(PedPartition * part)
 	    read_sector(part, dwOffsetToRead, dwSectorCountToRead,
 			(char *) cFileRecord)) {
 		//printf("readVolumeLabel(): failed in readData()\n");
-		return QString::null;
+		return QString();
 	}
 	// -------- decode the MFT File record
 	nOffsetSequenceAttribute = NTFS_GETU16(cFileRecord + 0x14);
@@ -1336,7 +1323,7 @@ QString QP_FSNtfs::_get_label(PedPartition * part)
 		{
 			if (bAttribResident == false) {
 				//printf("readVolumeLabel(): failed: $volume_name attribute is not resident\n");
-				return QString::null;
+				return QString();
 			}
 
 			nAttrSize = NTFS_GETU16(cData + 0x10);

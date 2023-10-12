@@ -125,11 +125,11 @@ void QP_PartWidget::paintEvent(QPaintEvent *) {
 		if (sizeText.width() > width()-10) {
 			/*---use the size in MByte or in GByte---*/
 			if (partinfo->mb_min_size() > 1024) {
-				partsize.sprintf("%3.2fGB", partinfo->mb_min_size() / 1024);
+                partsize.asprintf("%3.2fGB", partinfo->mb_min_size() / 1024);
 				label = QString("(%1)")
 								.arg(partsize);
 			} else {
-				partsize.sprintf("%3.2fMB", partinfo->mb_min_size());
+                partsize.asprintf("%3.2fMB", partinfo->mb_min_size());
 				label = QString("(%1)")
 								.arg(partsize);
 			}

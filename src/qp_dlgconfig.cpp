@@ -50,8 +50,8 @@ QP_dlgConfig::QP_dlgConfig(QWidget *p):QDialog(p),_layout(this) {
 	/*---clear combo box used for external tools---*/
 	int row=0;
 	for(QP_ListExternalTools::ConstIterator it = lstExternalTools->begin(); it != lstExternalTools->end(); ++it) {
-		QTableWidgetItem *w = new QTableWidgetItem(it.value()->name());
-		w->setFlags(0); // Get rid of Qt::ItemIsEditable
+        QTableWidgetItem *w = new QTableWidgetItem(it.value()->name());
+        w->setFlags(Qt::NoItemFlags); // Get rid of Qt::ItemIsEditable
 		_extTools->setItem(row, 0, w);
 		_extTools->setItem(row, 1, new QTableWidgetItem(it.value()->path()));
 		w = new QTableWidgetItem(it.value()->description());

@@ -92,7 +92,7 @@ int QP_Debug::open()
 
    // finds a filename
    dt = QDateTime::currentDateTime();
-   strFilename.sprintf("/var/log/qtparted-%.4d%.2d%.2d-%.2dh%.2dm%.2ds.log",
+   strFilename.asprintf("/var/log/qtparted-%.4d%.2d%.2d-%.2dh%.2dm%.2ds.log",
                        dt.date().year(), dt.date().month(), dt.date().day(),
 		       dt.time().hour(), dt.time().minute(), dt.time().second());
 

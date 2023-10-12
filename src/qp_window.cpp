@@ -30,6 +30,7 @@
 #include <QToolTip>
 #include <QWhatsThis>
 #include <QMessageBox>
+#include <QActionGroup>
 #include "qp_common.h"
 #include "qp_window.h"
 #include "qp_filesystem.h"
@@ -41,7 +42,7 @@
 
 QP_MainWindow::QP_MainWindow ( QP_Settings *qpsettings, QWidget *parent ) : QMainWindow ( parent )
 {
-	setWindowTitle ( QString ( "QtParted v%1" ).arg ( VERSION ) );
+    setWindowTitle(tr("Disk Partitioner"));
 
 	/*---load the setting from disk---*/
 	settings = qpsettings;
@@ -375,7 +376,7 @@ void QP_MainWindow::setupStatusBar()
 {
 	QWidget *hbox = new QWidget(this);
 	QHBoxLayout *hboxlayout = new QHBoxLayout(hbox);
-	hboxlayout->setMargin ( 5 );
+//	hboxlayout->setMargin ( 5 );
 	hboxlayout->setSpacing ( 6 );
 
 	/*---make a label, size it, set the text... and attach it to the hbox---*/
@@ -416,7 +417,7 @@ void QP_MainWindow::setupStatusBar()
 	lblmsg->setAlignment ( Qt::AlignLeft );
 	lblmsg->setFont ( boldfont );
 	lblmsg->setMinimumHeight ( lblmsg->sizeHint().height() );
-	lblmsg->setText ( QString::null );
+	lblmsg->setText ( QString() );
 	lblmsg->setToolTip ( "Message area" );
 	hboxlayout->addWidget ( lblmsg );
 
@@ -819,7 +820,7 @@ void QP_MainWindow::slotAbout()
 					" <a href=\"%4\">%4</a> for more "
 					"information.</p>" )
 					  .arg ( QMessageBox::tr ( "QtParted" ) )
-					  .arg ( QMessageBox::tr ( VERSION ) )
+                      //.arg ( QMessageBox::tr ( VERSION ) )
 					  .arg ( QMessageBox::tr ( "Copyright (C) 2003 by Vanni Brutto &lt;zanac4ever@virgilio.it&gt;<br />"
 								   "Copyright (C) 2005-2014 by Bernhard Rosenkraenzer &lt;bero@lindev.ch&gt;<br />"
 								   "Copyright (C) 2007-2008 by David Tio &lt;deux@arklinux.org&gt;<br />"
@@ -828,7 +829,7 @@ void QP_MainWindow::slotAbout()
 
 	QMessageBox mb ( this );
 
-	mb.setWindowTitle ( QMessageBox::tr ( "About %1 v%2" ).arg ( "QtParted" ).arg ( VERSION ) );
+    mb.setWindowTitle ( QMessageBox::tr ( "About Disk Partitioner" ));
 	mb.setText ( content );
 
 	QImage logo ( qtparted_xpm );

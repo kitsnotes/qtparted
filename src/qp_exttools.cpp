@@ -40,7 +40,7 @@ void QP_ListExternalTools::add(QString name, QString path, QString description) 
 
 QString QP_ListExternalTools::getPath(QString name) {
 	if(!contains(name))
-		return QString::null;
+		return QString();
 	return value(name)->path();
 }
 
@@ -52,6 +52,6 @@ void QP_ListExternalTools::setPath(QString name, QString path) {
 
 QString QP_ListExternalTools::getDescription(QString name) {
 	if(!contains(name))
-		return QString::null;
+		return QString();
 	return value(name)->description();
 }

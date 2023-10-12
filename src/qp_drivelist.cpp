@@ -24,6 +24,7 @@
 #include <QMenu>
 #include <sys/param.h>  // MAXPATHLEN
 
+#include <QActionGroup>
 #include "qp_drivelist.h"
 #include "qp_devlist.h"
 #include "qp_libparted.h"

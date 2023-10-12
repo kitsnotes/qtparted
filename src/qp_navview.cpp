@@ -27,7 +27,7 @@ QP_NavView::QP_NavView ( QWidget *parent, QP_Settings *settings )
 {
 
     QVBoxLayout *box = new QVBoxLayout ( this );
-    box->setMargin ( 6 );
+    //box->setMargin ( 6 );
     box->setSpacing ( 6 );
 
     /*---Drive List on the left (it display a tree with hda, hdb /etc /etc) ---*
@@ -64,7 +64,7 @@ QP_NavView::QP_NavView ( QWidget *parent, QP_Settings *settings )
     infoBox->setAutoFillBackground ( true );
 
     QVBoxLayout *infoBoxLayout = new QVBoxLayout(infoBox);
-    infoBoxLayout->setMargin ( 2 );
+    //infoBoxLayout->setMargin ( 2 );
     infoBoxLayout->setSpacing ( 2 );
 
     QLabel *infoTitle = new QLabel ( "<qt><center><b>" + tr ( "Drive Info" ) + "</b></center></qt>", infoBox );

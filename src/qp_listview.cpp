@@ -134,7 +134,7 @@ void QP_RealListView::addPrimary ( QP_PartInfo *partinfo, int number )
 
 	QString snumber;
 
-	snumber.sprintf ( "%.2d", number );
+    snumber.asprintf ( "%.2d", number );
 
 	QString name = partinfo->partname();
 
@@ -143,7 +143,7 @@ void QP_RealListView::addPrimary ( QP_PartInfo *partinfo, int number )
 	QString status;
 
 	if ( partinfo->isActive() ) status = QString ( tr ( "Active" ) );
-	else status = QString::null;
+	else status = QString();
 
 	if ( partinfo->isHidden() )
 	{
@@ -162,11 +162,11 @@ void QP_RealListView::addPrimary ( QP_PartInfo *partinfo, int number )
 	/*---if doesn't exit a partition table make "fake" listitem---*/
 	if ( !_device->partitionTable() )
 	{
-		fstype = QString::null;
-		startStr = QString::null;
-		endStr = QString::null;
-		sizeStr = QString::null;
-		usedStr = QString::null;
+		fstype = QString();
+		startStr = QString();
+		endStr = QString();
+		sizeStr = QString();
+		usedStr = QString();
 		snumber = QString ( "01" );
 		status = QString ( tr ( "Empty" ) );
 		name = QString ( tr ( "Partition table" ) );
@@ -199,13 +199,13 @@ void QP_RealListView::addLogical ( QP_PartInfo *partinfo, int number )
 	QString endStr = MB2String ( partinfo->mb_end() );
 	QString sizeStr = MB2String ( partinfo->mb_end() - partinfo->mb_start() );
 	QString snumber;
-	snumber.sprintf ( "%.2d", number );
+    snumber.asprintf ( "%.2d", number );
 	QString label = partinfo->label();
 
 	QString status;
 
 	if ( partinfo->isActive() ) status = QString ( tr ( "Active" ) );
-	else status = QString::null;
+	else status = QString();
 
 	if ( partinfo->isHidden() )
 	{

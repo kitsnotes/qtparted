@@ -57,15 +57,15 @@ QString MB2String ( float mbyte )
 
 	if ( mbyte > ( 1024 * 1024 ) )
 	{
-		label.sprintf ( "%3.2fTB", mbyte / ( 1024 * 1024 ) );
+        label.asprintf ( "%3.2fTB", mbyte / ( 1024 * 1024 ) );
 	}
 	else if ( mbyte > 1024 )
 	{
-		label.sprintf ( "%3.2fGB", mbyte / 1024 );
+        label.asprintf ( "%3.2fGB", mbyte / 1024 );
 	}
 	else
 	{
-		label.sprintf ( "%3.2fMB", mbyte );
+        label.asprintf ( "%3.2fMB", mbyte );
 	}
 
 	return label;
@@ -74,7 +74,7 @@ QString MB2String ( float mbyte )
 /*-begin of QP_PartInfo--------------------------------------------------------------------------*/
 QP_PartInfo::QP_PartInfo()
 {
-	_mountPoint = QString::null;
+    _mountPoint = QString();
 }
 
 QP_Device *QP_PartInfo::device()
@@ -218,12 +218,12 @@ bool QP_PartInfo::resize ( PedSector new_start, PedSector new_end )
 			if ( !rc )
 			{
 				_libparted->_message = fsspec->fswrap()->message();
-				_libparted->emitSigTimer ( 100, _libparted->message(), QString::null );
+                _libparted->emitSigTimer ( 100, _libparted->message(), QString() );
 				return false;
 			}
 			else
 			{
-				_libparted->emitSigTimer ( 100, SUCCESS, QString::null );
+                _libparted->emitSigTimer ( 100, SUCCESS, QString() );
 				return true;
 			}
 		}
@@ -237,18 +237,18 @@ bool QP_PartInfo::resize ( PedSector new_start, PedSector new_end )
 		if ( !rc )
 		{
 			showDebug ( "%s", "resize ko\n" );
-			_libparted->emitSigTimer ( 100, _libparted->message(), QString::null );
+            _libparted->emitSigTimer ( 100, _libparted->message(), QString() );
 		}
 		else
 		{
 			showDebug ( "%s", "resize ok\n" );
-			_libparted->emitSigTimer ( 100, SUCCESS, QString::null );
+            _libparted->emitSigTimer ( 100, SUCCESS, QString() );
 		}
 
 		return rc;
 	}
 
-	_libparted->emitSigTimer ( 100, NOTSUCCESS, QString::null );
+    _libparted->emitSigTimer ( 100, NOTSUCCESS, QString() );
 
 	return false;
 }
@@ -289,12 +289,12 @@ bool QP_PartInfo::move ( PedSector new_start, PedSector new_end )
 	if ( !rc )
 	{
 		showDebug ( "%s", "qp_partinfo::move ko\n" );
-		_libparted->emitSigTimer ( 100, _libparted->message(), QString::null );
+        _libparted->emitSigTimer ( 100, _libparted->message(), QString() );
 	}
 	else
 	{
 		showDebug ( "%s", "qp_partinfo::move ok\n" );
-		_libparted->emitSigTimer ( 100, SUCCESS, QString::null );
+        _libparted->emitSigTimer ( 100, SUCCESS, QString() );
 	}
 
 	return rc;
@@ -417,7 +417,7 @@ void _timer_handler ( PedTimer *timer, void *context )
 			int percent = ( int ) ( 100.0 * timer->frac );
 			QString state = QString ( timer->state_name );
 			QString timeleft;
-			timeleft.sprintf ( "%.2d:%.2d",
+            timeleft.asprintf ( "%.2d:%.2d",
 							   ( int ) ( tcontext->predicted_time_left / 60 ),
 							   ( int ) ( tcontext->predicted_time_left % 60 ) );
 			tcontext->libparted->emitSigTimer ( percent, state, timeleft );
@@ -528,7 +528,7 @@ void QP_LibParted::scan_partitions()
 	logilist.clear();
 	partlist.clear();
 
-	_message = QString::null;
+    _message = QString();
 
 	/*---if doesn't exist a partition table...---*/
 
@@ -558,7 +558,7 @@ void QP_LibParted::scan_partitions()
 		partinfo->t_end = -1;
 		partlist.append ( partinfo );
 
-		//emitSigTimer(100, message(), QString::null);
+        //emitSigTimer(100, message(), QString());
 		return ;
 	}
 
@@ -586,7 +586,7 @@ void QP_LibParted::scan_partitions()
 			}
 		}
 	}
-	//emitSigTimer(100, message(), QString::null);
+    //emitSigTimer(100, message(), QString());
 }
 
 
@@ -599,7 +599,7 @@ void QP_LibParted::scan_orig_partitions()
 	logilist.clear();
 	partlist.clear();
 
-	_message = QString::null;
+    _message = QString();
 
 	_mb_hdsize = ( dev->length * dev->sector_size ) / MEGABYTE;
 
@@ -623,7 +623,7 @@ void QP_LibParted::scan_orig_partitions()
 		}
 	}
 
-	//emitSigTimer ( 100, message(), QString::null );
+    //emitSigTimer ( 100, message(), QString() );
 }
 
 qtp_DriveInfo QP_LibParted::device_info ( QString strdev )
@@ -1046,7 +1046,7 @@ int QP_LibParted::mkfs ( QP_PartInfo *partinfo, QP_FileSystemSpec *fsspec, QStri
 	PedPartition *part;
 	PedFileSystem *fs = NULL;
 	PedFileSystemType *fs_type = NULL;
-	_message = QString::null;
+    _message = QString();
 
 	part = ped_disk_get_partition ( actlist->disk(), partinfo->num );
 
@@ -1158,7 +1158,7 @@ int QP_LibParted::mkpart ( QTParted::partType type, PedSector start, PedSector e
 	PedGeometry part_geom;
 	int num;
 
-	_message = QString::null;
+    _message = QString();
 
 	/*---it is not possible that part_type is different than primary and logical... 'cause
 	 *---the only case is when a partition is extended, but just above i tested if it was!---*/
@@ -1321,16 +1321,16 @@ int QP_LibParted::mkpartfs ( QTParted::partType type,
 							 QString label )
 {
 	showDebug ( "%s", "libparted::mkpartfs\n" );
-	_message = QString::null;
+    _message = QString();
 
 	/*---want to make an extended partition? Than call mkpart!---*/
 
 	if ( type == QTParted::extended )
 	{
-		bool rc = mkpart ( type, start, end, NULL, QString::null );
+        bool rc = mkpart ( type, start, end, NULL, QString() );
 
-		if ( !rc ) emitSigTimer ( 100, message(), QString::null );
-		else	 emitSigTimer ( 100, SUCCESS, QString::null );
+        if ( !rc ) emitSigTimer ( 100, message(), QString() );
+        else	 emitSigTimer ( 100, SUCCESS, QString() );
 
 		return rc;
 	}
@@ -1363,9 +1363,9 @@ int QP_LibParted::mkpartfs ( QTParted::partType type,
 			if ( !rc )
 			{
 				showDebug ( "%s", "libparted::mkpartfs, mkpart ko\n" );
-				emitSigTimer ( 100, message(), QString::null );
+                emitSigTimer ( 100, message(), QString() );
 			}
-			else	 emitSigTimer ( 100, SUCCESS, QString::null );
+            else	 emitSigTimer ( 100, SUCCESS, QString() );
 
 			return rc;
 		}
@@ -1464,7 +1464,7 @@ int QP_LibParted::mkpartfs ( QTParted::partType type,
 		}
 	}
 
-	emitSigTimer ( 100, SUCCESS, QString::null );
+    emitSigTimer ( 100, SUCCESS, QString() );
 
 	return true;
 
@@ -1478,7 +1478,7 @@ error_destroy_constraint:
 	ped_constraint_destroy ( constraint );
 
 error:
-	emitSigTimer ( 100, message(), QString::null );
+    emitSigTimer ( 100, message(), QString() );
 	return false;
 }
 
@@ -1547,7 +1547,7 @@ bool QP_LibParted::partition_is_busy ( int num )
 {
 	showDebug ( "%s", "libparted::partition_is_busy\n" );
 	PedPartition *part;
-	_message = QString::null;
+    _message = QString();
 
 	/*---get the partition structure---*/
 	part = ped_disk_get_partition ( actlist->disk(), num );
@@ -1871,7 +1871,7 @@ bool QP_LibParted::resize ( QP_PartInfo *partinfo, PedSector start, PedSector en
 {
 	showDebug ( "%s", "libparted::resize(partinfo)\n" );
 
-	_message = QString::null;
+    _message = QString();
 
 	PedPartition *part;
 	PedFileSystem *fs;
@@ -2048,7 +2048,7 @@ PedPartitionType QP_LibParted::type2parttype ( QTParted::partType type )
 bool QP_LibParted::set_geometry ( QP_PartInfo *partinfo, PedSector start, PedSector end )
 {
 	showDebug ( "%s", "libparted::set_geometry\n" );
-	_message = QString::null;
+    _message = QString();
 
 	PedPartition *part;
 	PedConstraint *constraint;

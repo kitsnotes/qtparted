@@ -1,28 +1,4 @@
-#    qtparted - a frontend to libparted for manipulating disk partitions
-#    Copyright (C) 2002-2003 Vanni Brutto
-#
-#    Vanni Brutto <zanac (-at-) libero dot it>
-#
-#    This program is free software; you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation; either version 2 of the License, or
-#    (at your option) any later version.
-#
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
-#
-#    You should have received a copy of the GNU General Public License
-#    along with this program; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
-#
-# QTParted qmake profile
-#
-
-# Configuration.  Remove the word 'thread' to build against non-threaded Qt
-CONFIG    += qt thread debug
+QT+=core gui widgets
 
 #LIBS
 unix:LIBS += -ldl -lparted
@@ -33,7 +9,6 @@ TARGET    = qtparted
 
 # Header files
 HEADERS   =  qtparted.h          \
-             qp_options.h        \
              qp_common.h         \
              qp_settings.h       \
              qp_exttools.h       \
@@ -46,7 +21,6 @@ HEADERS   =  qtparted.h          \
              qp_dlgprogress.h    \
              qp_dlgformat.h      \
              qp_dlgconfig.h      \
-             qp_dlgabout.h       \
              qp_partlist.h       \
              qp_listview.h       \
              qp_listchart.h      \
@@ -82,7 +56,6 @@ SOURCES   =  main.cpp            \
              qp_dlgprogress.cpp  \
              qp_dlgformat.cpp    \
              qp_dlgconfig.cpp    \
-             qp_dlgabout.cpp     \
              qp_partlist.cpp     \
              qp_listview.cpp     \
              qp_listchart.cpp    \
@@ -107,8 +80,7 @@ INTERFACES = qp_ui_create.ui     \
              qp_ui_format.ui     \
              qp_ui_resize.ui     \
              qp_ui_progress.ui   \
-             qp_ui_devprop.ui    \
-             qp_ui_config.ui
+             qp_ui_devprop.ui
 
 # Translations
 TRANSLATIONS = ../ts/qtparted_ca.ts \
